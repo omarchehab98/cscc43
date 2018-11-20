@@ -48,10 +48,11 @@ public class AppView implements Observer, View {
     }
 
     private void repaintPage() {
+        panel.removeAll();
         if (page != -1) {
-            panel.removeAll();
             panel.add(PageViewFactory.make(page).render());
-            panel.revalidate();
         }
+        panel.revalidate();
+        panel.repaint();
     }
 }

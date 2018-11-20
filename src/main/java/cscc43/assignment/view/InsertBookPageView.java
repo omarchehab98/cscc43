@@ -1,6 +1,8 @@
 package cscc43.assignment.view;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -8,6 +10,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import cscc43.assignment.App;
+import cscc43.assignment.controller.MenuBarController;
 import cscc43.assignment.view.util.JTextFieldLimit;
 
 public class InsertBookPageView implements Observer, View {
@@ -26,6 +30,8 @@ public class InsertBookPageView implements Observer, View {
         panel.add(new InputStringView("Description").setDocument(new JTextFieldLimit(5000)).render());
         panel.add(new InputBookAuthorsView().render());
         panel.add(new InputBookKeywordsView().render());
+        panel.add(new ButtonView("Submit", new SubmitAction()).render());
+        panel.add(new ButtonView("Cancel", new CancelAction()).render());
         panel.add(new FillerView().render());
 
         scrollPane.setViewportView(panel);
@@ -35,5 +41,17 @@ public class InsertBookPageView implements Observer, View {
 
     public void update(Observable o, Object arg) {
 
+    }
+
+    private class SubmitAction implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            MenuBarController.getInstance().setPage(-1);
+        }
+    }
+
+    private class CancelAction implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            MenuBarController.getInstance().setPage(-1);
+        }
     }
 }

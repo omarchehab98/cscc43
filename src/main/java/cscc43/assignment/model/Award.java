@@ -20,10 +20,20 @@ public class Award {
     })
     private Movie movie;
 
+    public Award() {
+        this(0, null, null);
+    }
+
     public Award(Integer award, Person person, Movie movie) {
         this.award = award;
         this.person = person;
         this.movie = movie;
+    }
+
+    public Award initialize() {
+        this.person = new Person();
+        this.movie = new Movie();
+        return this;
     }
 
     public Integer getAward() {

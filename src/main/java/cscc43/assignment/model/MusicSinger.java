@@ -18,6 +18,10 @@ public class MusicSinger {
     @JoinColumn(name="PeopleInvolved_ID", referencedColumnName="ID")
     private Person person;
 
+    public MusicSinger() {
+        this(null, null);
+    }
+
     public MusicSinger(Music music, Person person) {
         this.music = music;
         this.person = person;

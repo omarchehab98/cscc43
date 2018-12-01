@@ -1,6 +1,7 @@
 package cscc43.assignment.model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
@@ -27,6 +28,10 @@ public class Book {
     @OneToMany(targetEntity=BookKeyword.class, mappedBy="book")
     private List<BookKeyword> bookKeywords;
 
+    public Book() {
+        this("", "", "", 0, 0, 0, "", new ArrayList<BookAuthor>(), new ArrayList<BookKeyword>());
+    }
+
     public Book(String isbn, String title, String publisher, Integer numberOfPages, Integer yearOfPublication, Integer editionNumber, String description, List<BookAuthor> bookAuthors, List<BookKeyword> bookKeywords) {
         this.isbn = isbn;
         this.title = title;
@@ -37,6 +42,12 @@ public class Book {
         this.description = description;
         this.bookAuthors = bookAuthors;
         this.bookKeywords = bookKeywords;
+    }
+
+    public Book initialize() {
+        this.bookAuthors.add(new BookAuthor().initialize());
+        this.bookKeywords.add(new BookKeyword().initialize());
+        return this;
     }
 
     public String getIsbn() {

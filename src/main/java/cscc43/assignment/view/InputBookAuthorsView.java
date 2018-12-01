@@ -7,8 +7,11 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
+import cscc43.assignment.model.BookAuthor;
+
 public class InputBookAuthorsView implements View {
     private JPanel panel;
+    private Iterable<BookAuthor> defaultAuthors;
     private int numberOfAuthors = 0;
     private final int minAuthors = 1;
     private final int maxAuthors = 5;
@@ -20,17 +23,39 @@ public class InputBookAuthorsView implements View {
         panel.add(new ButtonView("Add Author", new InsertAuthorAction()).render());
         panel.add(new ButtonView("Remove Author", new RemoveAuthorAction()).render());
 
-        insertAuthor();
+        if (defaultAuthors == null) {
+            insertAuthor();
+        } else {
+            for (BookAuthor author : defaultAuthors) {
+                insertAuthor(author);
+            }
+        }
 
         return panel;
     }
 
+    public InputBookAuthorsView setDefaultAuthors(Iterable<BookAuthor> authors) {
+        this.defaultAuthors = authors;
+        return this;
+    }
+
     private void insertAuthor() {
+        insertAuthor(new BookAuthor().initialize());
+    }
+
+    private void insertAuthor(BookAuthor author) {
         if (numberOfAuthors < maxAuthors) {
-            panel.add(new HeadingView(String.format("Author %d", ++numberOfAuthors)).render(), panel.getComponentCount() - 2);
-            panel.add(new InputStringView("First name").render(), panel.getComponentCount() - 2);
-            panel.add(new InputStringView("Middle name").render(), panel.getComponentCount() - 2);
-            panel.add(new InputStringView("Last name").render(), panel.getComponentCount() - 2);
+            panel.add(new HeadingView(String.format("Author %d", ++numberOfAuthors))
+                .render(), panel.getComponentCount() - 2);
+            panel.add(new InputStringView("First name")
+                .setDefaultText(author.getPerson().getFirstName())
+                .render(), panel.getComponentCount() - 2);
+            panel.add(new InputStringView("Middle name")
+                .setDefaultText(author.getPerson().getMiddleName())
+                .render(), panel.getComponentCount() - 2);
+            panel.add(new InputStringView("Last name")
+                .setDefaultText(author.getPerson().getLastName())
+                .render(), panel.getComponentCount() - 2);
             panel.revalidate();
         }
     }

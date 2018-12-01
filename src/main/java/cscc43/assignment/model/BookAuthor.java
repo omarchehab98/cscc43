@@ -13,9 +13,19 @@ public class BookAuthor {
     @JoinColumn(name="Author_ID", referencedColumnName="ID")
     private Person person;
 
+    public BookAuthor() {
+        this(null, null);
+    }
+
     public BookAuthor(Book book, Person person) {
         this.book = book;
         this.person = person;
+    }
+
+    public BookAuthor initialize() {
+        this.setBook(new Book());
+        this.setPerson(new Person());
+        return this;
     }
 
     public Book getBook() {

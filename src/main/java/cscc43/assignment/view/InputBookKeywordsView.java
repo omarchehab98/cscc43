@@ -7,8 +7,11 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
+import cscc43.assignment.model.BookKeyword;
+
 public class InputBookKeywordsView implements View {
     private JPanel panel;
+    private Iterable<BookKeyword> defaultKeywords;
     private int numberOfKeywords = 0;
     private final int minKeywords = 0;
     private final int maxKeywords = 20;
@@ -20,13 +23,33 @@ public class InputBookKeywordsView implements View {
         panel.add(new ButtonView("Add Keyword", new InsertKeywordAction()).render());
         panel.add(new ButtonView("Remove Keyword", new RemoveKeywordAction()).render());
 
+        if (defaultKeywords == null) {
+            insertKeyword();
+        } else {
+            for (BookKeyword keyword : defaultKeywords) {
+                insertKeyword(keyword);
+            }
+        }
+
         return panel;
     }
 
+    public InputBookKeywordsView setDefaultKeywords(Iterable<BookKeyword> keywords) {
+        this.defaultKeywords = keywords;
+        return this;
+    }
+
     private void insertKeyword() {
+        insertKeyword(new BookKeyword().initialize());
+    }
+
+    private void insertKeyword(BookKeyword keyword) {
         if (numberOfKeywords < maxKeywords) {
-            panel.add(new HeadingView(String.format("Keyword %d", ++numberOfKeywords)).render(), panel.getComponentCount() - 2);
-            panel.add(new InputStringView("Tag").render(), panel.getComponentCount() - 2);
+            panel.add(new HeadingView(String.format("Keyword %d", ++numberOfKeywords))
+                .render(), panel.getComponentCount() - 2);
+            panel.add(new InputStringView("Tag")
+                .setDefaultText(keyword.getKeyword().getTag())
+                .render(), panel.getComponentCount() - 2);
             panel.revalidate();
         }
     }

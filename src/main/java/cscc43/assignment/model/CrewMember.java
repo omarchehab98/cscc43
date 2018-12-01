@@ -20,10 +20,21 @@ public class CrewMember {
     @JoinColumn(name="Role_ID", referencedColumnName="ID")
     private Role role;
 
+    public CrewMember() {
+        this(null, null, null);
+    }
+
     public CrewMember(Person person, Movie movie, Role role) {
         this.person = person;
         this.movie = movie;
         this.role = role;
+    }
+
+    public CrewMember initialize() {
+        this.person = new Person();
+        this.movie = new Movie();
+        this.role = new Role();
+        return this;
     }
 
     public Person getPerson() {

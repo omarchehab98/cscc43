@@ -1,6 +1,7 @@
 package cscc43.assignment.model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
@@ -28,6 +29,10 @@ public class Music {
     @OneToMany(targetEntity=MusicPerson.class, mappedBy="music")
     private List<MusicPerson> musicPersons;
 
+    public Music() {
+        this("", 0, "", "", 0, null, new ArrayList<MusicSinger>(), new ArrayList<MusicPerson>());
+    }
+
     public Music(String albumName, Integer year, String musicName, String language, Integer diskType, Person producer, List<MusicSinger> musicSingers, List<MusicPerson> musicPersons) {
         this.albumName = albumName;
         this.year = year;
@@ -37,6 +42,15 @@ public class Music {
         this.producer = producer;
         this.musicSingers = musicSingers;
         this.musicPersons = musicPersons;
+    }
+
+    public Music initialize() {
+        this.producer = new Person();
+        this.musicSingers.add(new MusicSinger(new Music(), new Person()));
+        this.musicPersons.add(new MusicPerson(1, 0, 0, new Music(), new Person()));
+        this.musicPersons.add(new MusicPerson(0, 1, 0, new Music(), new Person()));
+        this.musicPersons.add(new MusicPerson(0, 0, 1, new Music(), new Person()));
+        return this;
     }
 
     public String getAlbumName() {
@@ -101,5 +115,32 @@ public class Music {
 
     public void setMusicPersons(List<MusicPerson> musicPersons) {
         this.musicPersons = musicPersons;
+    }
+
+    public MusicPerson getMusicPersonComposer() {
+        for (MusicPerson musicPerson : musicPersons) {
+            if (musicPerson.getIsComposer() == 1) {
+                return musicPerson;
+            }
+        }
+        return null;
+    }
+
+    public MusicPerson getMusicPersonArranger() {
+        for (MusicPerson musicPerson : musicPersons) {
+            if (musicPerson.getIsArranger() == 1) {
+                return musicPerson;
+            }
+        }
+        return null;
+    }
+
+    public MusicPerson getMusicPersonSongwriter() {
+        for (MusicPerson musicPerson : musicPersons) {
+            if (musicPerson.getIsSongwriter() == 1) {
+                return musicPerson;
+            }
+        }
+        return null;
     }
 }

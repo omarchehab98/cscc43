@@ -43,7 +43,7 @@ public class InputIntegerView implements View {
         return panelView;
     }
 
-    public InputIntegerView defaultNumber(int defaultNumber) {
+    public InputIntegerView setDefaultNumber(int defaultNumber) {
         this.defaultNumber = defaultNumber;
         return this;
     }

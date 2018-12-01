@@ -1,6 +1,7 @@
 package cscc43.assignment.model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
@@ -14,6 +15,10 @@ public class Role {
     private String description;
     @OneToMany(targetEntity=CrewMember.class, mappedBy="role")
     private List<CrewMember> crewMembers;
+
+    public Role() {
+        this(-1, "", new ArrayList<CrewMember>());
+    }
 
     public Role(Integer id, String description, List<CrewMember> crewMembers) {
         this.id = id;

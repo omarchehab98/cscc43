@@ -15,6 +15,10 @@ public class Keyword {
     @OneToMany(targetEntity=BookKeyword.class, mappedBy="keyword")
     private List<BookKeyword> bookKeywords;
 
+    public Keyword() {
+        this(-1, "", null);
+    }
+
     public Keyword(Integer id, String tag, List<BookKeyword> bookKeywords) {
         this.id = id;
         this.tag = tag;

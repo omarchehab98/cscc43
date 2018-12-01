@@ -13,9 +13,19 @@ public class BookKeyword {
     @JoinColumn(name="Keyword_ID", referencedColumnName="ID")
     private Keyword keyword;
 
+    public BookKeyword() {
+        this(null, null);
+    }
+
     public BookKeyword(Book book, Keyword keyword) {
         this.book = book;
         this.keyword = keyword;
+    }
+
+    public BookKeyword initialize() {
+        this.setBook(new Book());
+        this.setKeyword(new Keyword());
+        return this;
     }
 
     public Book getBook() {

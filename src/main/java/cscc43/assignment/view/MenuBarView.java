@@ -1,5 +1,8 @@
 package cscc43.assignment.view;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +16,9 @@ import javax.swing.JOptionPane;
 import cscc43.assignment.App;
 import cscc43.assignment.controller.MenuBarController;
 import cscc43.assignment.store.AppState;
+import cscc43.assignment.model.Book;
+import cscc43.assignment.model.Movie;
+import cscc43.assignment.model.Music;
 
 public class MenuBarView implements View {
     public Component render() {
@@ -31,15 +37,18 @@ public class MenuBarView implements View {
         
         // Menu > Data > Insert > Book
         menuItemView = new JMenuItem("Book");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_BOOK));
+        menuItemView.addActionListener(new SetPageAction(AppState.Pages.UPSERT_BOOK));
+        menuItemView.addActionListener(new SetBookAction());
         submenuView.add(menuItemView);
         // Menu > Data > Insert > Music
         menuItemView = new JMenuItem("Music");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_MUSIC));
+        menuItemView.addActionListener(new SetPageAction(AppState.Pages.UPSERT_MUSIC));
+        menuItemView.addActionListener(new SetMusicTracksAction());
         submenuView.add(menuItemView);
         // Menu > Data > Insert > Movie
         menuItemView = new JMenuItem("Movie");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_MOVIE));
+        menuItemView.addActionListener(new SetPageAction(AppState.Pages.UPSERT_MOVIE));
+        menuItemView.addActionListener(new SetMovieAction());
         submenuView.add(menuItemView);
         
         // Menu > Data > Update
@@ -126,13 +135,50 @@ public class MenuBarView implements View {
         }
     }
 
+    private class SetBookAction implements ActionListener {
+        private Book book;
+
+        public SetBookAction() {
+            this.book = new Book().initialize();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            MenuBarController.getInstance().setBook(this.book);
+        }
+    }
+
+    private class SetMovieAction implements ActionListener {
+        private Movie movie;
+
+        public SetMovieAction() {
+            this.movie = new Movie().initialize();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            MenuBarController.getInstance().setMovie(this.movie);
+        }
+    }
+
+    private class SetMusicTracksAction implements ActionListener {
+        private List<Music> musicTracks;
+
+        public SetMusicTracksAction() {
+            this.musicTracks = new ArrayList<Music>();
+            this.musicTracks.add(new Music().initialize());
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            MenuBarController.getInstance().setMusicTracks(this.musicTracks);
+        }
+    }
+
     private class UpdateDialogAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String s = (String)JOptionPane.showInputDialog(App.getFrame(), "Entity name", "Update", JOptionPane.PLAIN_MESSAGE);
             if (s != null) {
-                MenuBarController.getInstance().setPage(AppState.Pages.UPDATE_BOOK);
-                // MenuBarController.getInstance().setPage(AppState.Pages.UPDATE_MOVIE);
-                // MenuBarController.getInstance().setPage(AppState.Pages.UPDATE_MUSIC);
+                MenuBarController.getInstance().setPage(AppState.Pages.UPSERT_BOOK);
+                // MenuBarController.getInstance().setPage(AppState.Pages.UPSERT_MOVIE);
+                // MenuBarController.getInstance().setPage(AppState.Pages.UPSERT_MUSIC);
             }
         }
     }

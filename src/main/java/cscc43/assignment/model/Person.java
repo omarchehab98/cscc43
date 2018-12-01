@@ -1,6 +1,7 @@
 package cscc43.assignment.model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
@@ -18,7 +19,7 @@ public class Person {
     @Column(name="LastName")
     private String lastName;
     @Column(name="Gender")
-    private String gender;
+    private Integer gender;
     @OneToMany(targetEntity=BookAuthor.class, mappedBy="person")
     private List<BookAuthor> bookAuthors;
     @OneToMany(targetEntity=CrewMember.class, mappedBy="person")
@@ -32,7 +33,11 @@ public class Person {
     @OneToOne(targetEntity=Music.class, mappedBy="producer")
     private Music producedMusic;
 
-    public Person(Integer id, String firstName, String middleName, String lastName, String gender, List<BookAuthor> bookAuthors, List<CrewMember> crewMembers, List<Award> awards, List<MusicSinger> musicSingers, List<MusicPerson> musicPersons, Music producedMusic) {
+    public Person() {
+        this(-1, "", "", "", Gender.MALE, new ArrayList<BookAuthor>(), new ArrayList<CrewMember>(), new ArrayList<Award>(), new ArrayList<MusicSinger>(), new ArrayList<MusicPerson>(), null);
+    }
+
+    public Person(Integer id, String firstName, String middleName, String lastName, Integer gender, List<BookAuthor> bookAuthors, List<CrewMember> crewMembers, List<Award> awards, List<MusicSinger> musicSingers, List<MusicPerson> musicPersons, Music producedMusic) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -78,11 +83,11 @@ public class Person {
         this.lastName = lastName;
     }
 
-    public String getGender() {
+    public Integer getGender() {
         return this.gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Integer gender) {
         this.gender = gender;
     }
 
@@ -132,5 +137,25 @@ public class Person {
 
     public void setProducedMusic(Music producedMusic) {
         this.producedMusic = producedMusic;
+    }
+
+    public static class Gender {
+        public static final Integer FEMALE = 0;
+        public static final Integer MALE = 1;
+
+        private Gender() {}
+
+        public static String toString(Integer gender) {
+            switch (gender) {
+                case 0:
+                    return "Female";
+
+                case 1:
+                    return "Male";
+                    
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
     }
 }

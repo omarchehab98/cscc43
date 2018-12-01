@@ -25,6 +25,10 @@ public class MusicPerson {
     @JoinColumn(name="PeopleInvolved_ID", referencedColumnName="ID")
     private Person person;
 
+    public MusicPerson() {
+        this(0, 0, 0, null, null);
+    }
+
     public MusicPerson(Integer isSongwriter, Integer isComposer, Integer isArranger, Music music, Person person) {
         this.isSongwriter = isSongwriter;
         this.isComposer = isComposer;

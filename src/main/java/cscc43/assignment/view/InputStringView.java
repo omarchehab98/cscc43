@@ -26,7 +26,7 @@ public class InputStringView implements View {
         JLabel labelView = new JLabel();
         textFieldView = new JTextField();
         
-        panelView.setPreferredSize(new Dimension(450, 26));
+        // panelView.setPreferredSize(new Dimension(450, 26));
         panelView.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         labelView.setText(this.label);

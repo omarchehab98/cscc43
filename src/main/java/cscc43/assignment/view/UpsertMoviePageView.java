@@ -11,6 +11,7 @@ import java.util.Observer;
 import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -35,26 +36,28 @@ public class UpsertMoviePageView implements Observer, View {
     private InputMovieCrewMembersView composerView;
     private InputMovieCrewMembersView editorView;
     private InputMovieCrewMembersView costumeDesignerView;
+    private boolean isInsert;
 
     public Component render() {
+        AppState state = App.getStore().getState();
+        Movie movie = state.getMovie();
+        isInsert = state.getMovie().getName().equals("");;
+        
         JScrollPane scrollPane = new JScrollPane();
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        AppState state = App.getStore().getState();
-        Movie movie = state.getMovie();
 
         panel.add(new HeadingView("Movie").render());
 
         nameView = new InputStringView("Name")
             .setDefaultText(movie.getName())
-            .setIsEditable(isInsert());
+            .setIsEditable(isInsert);
         panel.add(nameView.render());
         
         yearOfReleaseView = new InputIntegerView("Year of release")
             .setDefaultNumber(movie.getYear())
             .setMin(0)
-            .setIsEditable(isInsert());
+            .setIsEditable(isInsert);
         panel.add(yearOfReleaseView.render());
 
         directorView = new InputMovieCrewMembersView(roleRepository.findOneByDescription("Director"))
@@ -125,14 +128,14 @@ public class UpsertMoviePageView implements Observer, View {
             movie.setAwards(awards);
     
             try {
-                if (isInsert()) {
+                if (isInsert) {
                     MovieController.getInstance().insert(movie);
                 } else {
                     MovieController.getInstance().update(movie);
                 }
                 MenuBarController.getInstance().setPage(-1);
             } catch (MovieUpsertException err) {
-                System.out.println(err);
+                JOptionPane.showMessageDialog(App.getFrame(), err);
             }
         }
     }
@@ -141,10 +144,5 @@ public class UpsertMoviePageView implements Observer, View {
         public void actionPerformed(ActionEvent e) {
             MenuBarController.getInstance().setPage(-1);
         }
-    }
-
-    private boolean isInsert() {
-        AppState state = App.getStore().getState();
-        return state.getMovie().getName().equals("");
     }
 }

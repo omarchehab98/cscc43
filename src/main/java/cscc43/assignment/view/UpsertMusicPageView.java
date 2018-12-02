@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -27,28 +28,30 @@ public class UpsertMusicPageView implements Observer, View {
     private InputStringView producerMiddleNameView;
     private InputStringView producerLastNameView;
     private InputMusicTracksView musicTrackViews;
+    private boolean isInsert;
 
     public Component render() {
-        JScrollPane scrollPane = new JScrollPane();
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
         AppState state = App.getStore().getState();
         List<Music> musicTracks = state.getMusicTracks();
         Music musicAlbum = musicTracks.get(0);
+        isInsert = musicAlbum.getAlbumName().equals("");
+
+        JScrollPane scrollPane = new JScrollPane();
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         panel.add(new HeadingView("Music").render());
         panel.add(new HeadingView("Album").render());
 
         nameView = new InputStringView("Name")
             .setDefaultText(musicAlbum.getAlbumName())
-            .setIsEditable(isInsert());
+            .setIsEditable(isInsert);
         panel.add(nameView.render());
 
         yearPublishedView = new InputIntegerView("Year published")
             .setDefaultNumber(musicAlbum.getYear())
             .setMin(0)
-            .setIsEditable(isInsert());
+            .setIsEditable(isInsert);
         panel.add(yearPublishedView.render());
 
         panel.add(new HeadingView("Producer").render());
@@ -67,7 +70,7 @@ public class UpsertMusicPageView implements Observer, View {
 
         musicTrackViews = new InputMusicTracksView()
             .setDefaultMusic(musicTracks)
-            .setPrimaryKeyIsEditable(isInsert());
+            .setPrimaryKeyIsEditable(isInsert);
         panel.add(musicTrackViews.render());
 
         panel.add(new ButtonView("Submit", new SubmitAction()).render());
@@ -104,14 +107,14 @@ public class UpsertMusicPageView implements Observer, View {
             }
             
             try {
-                if (isInsert()) {
+                if (isInsert) {
                     MusicController.getInstance().insert(musicTracks);
                 } else {
                     MusicController.getInstance().update(musicTracks);
                 }
                 MenuBarController.getInstance().setPage(-1);
             } catch (MusicUpsertException err) {
-                System.out.println(err);
+                JOptionPane.showMessageDialog(App.getFrame(), err);
             }
         }
     }
@@ -120,11 +123,5 @@ public class UpsertMusicPageView implements Observer, View {
         public void actionPerformed(ActionEvent e) {
             MenuBarController.getInstance().setPage(-1);
         }
-    }
-
-    private boolean isInsert() {
-        AppState state = App.getStore().getState();
-        Music musicAlbum = state.getMusicTracks().get(0);
-        return musicAlbum.getAlbumName().equals("");
     }
 }

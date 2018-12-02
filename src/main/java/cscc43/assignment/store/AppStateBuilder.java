@@ -5,6 +5,7 @@ import java.util.List;
 import cscc43.assignment.model.Book;
 import cscc43.assignment.model.Movie;
 import cscc43.assignment.model.Music;
+import cscc43.assignment.viewmodel.Report;
 import cscc43.assignment.viewmodel.SearchResult;
 
 public class AppStateBuilder {
@@ -17,6 +18,7 @@ public class AppStateBuilder {
         setMovie(state.getMovie());
         setMusicTracks(state.getMusicTracks());
         setSearchResult(state.getSearchResult());
+        setReport(state.getReport());
     }
 
     public AppStateBuilder setPage(int page) {
@@ -41,6 +43,11 @@ public class AppStateBuilder {
 
     public AppStateBuilder setSearchResult(SearchResult searchResult) {
         this.state.setSearchResult(searchResult);
+        return this;
+    }
+
+    public AppStateBuilder setReport(Report report) {
+        this.state.setReport(report);
         return this;
     }
 

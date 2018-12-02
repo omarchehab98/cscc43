@@ -28,14 +28,16 @@ public class UpsertBookPageView implements Observer, View {
     private InputStringView descriptionView;
     private InputBookAuthorsView bookAuthorsView;
     private InputBookKeywordsView bookKeywordsView;
+    private boolean isInsert;
 
     public Component render() {
+        AppState state = App.getStore().getState();
+        Book book = state.getBook();
+        isInsert = state.getBook().getIsbn().equals("");;
+
         JScrollPane scrollPane = new JScrollPane();
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        AppState state = App.getStore().getState();
-        Book book = state.getBook();
 
         panel.add(new HeadingView("Book").render());
 
@@ -45,7 +47,7 @@ public class UpsertBookPageView implements Observer, View {
         
         isbnView = new InputStringView("ISBN")
             .setDefaultText(book.getIsbn())
-            .setIsEditable(isInsert());
+            .setIsEditable(isInsert);
         panel.add(isbnView.render());
 
         publisherNameView = new InputStringView("Publisher name")
@@ -107,7 +109,7 @@ public class UpsertBookPageView implements Observer, View {
             book.setBookKeywords(bookKeywordsView.getValue());
     
             try {
-                if (isInsert()) {
+                if (isInsert) {
                     BookController.getInstance().insert(book);
                 } else {
                     BookController.getInstance().update(book);
@@ -123,10 +125,5 @@ public class UpsertBookPageView implements Observer, View {
         public void actionPerformed(ActionEvent e) {
             MenuBarController.getInstance().setPage(-1);
         }
-    }
-
-    private boolean isInsert() {
-        AppState state = App.getStore().getState();
-        return state.getBook().getIsbn().equals("");
     }
 }

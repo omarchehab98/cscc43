@@ -50,7 +50,7 @@ public class ViewController {
                 "            `Title` LIKE ? " +
                 "        ORDER BY " +
                 "            `FamilyName`, `FirstName` " +
-                "            DESC " +
+                "            ASC " +
                 "        LIMIT 1 " +
                 "    ) UNION ( " +
                 "        SELECT " +
@@ -75,7 +75,7 @@ public class ViewController {
                 "            AND `Role`.`Description`='Director' " +
                 "        ORDER BY " +
                 "            `FamilyName`, `FirstName` " +
-                "            DESC " +
+                "            ASC " +
                 "        LIMIT 1 " +
                 "    ) UNION ( " +
                 "        SELECT " +
@@ -97,7 +97,7 @@ public class ViewController {
                 "            `Music`.`AlbumName` LIKE ? " +
                 "        ORDER BY " +
                 "            `FamilyName`, `FirstName` " +
-                "            DESC " +
+                "            ASC " +
                 "        LIMIT 1 " +
                 "    ) " +
                 ") AS `Query` " +

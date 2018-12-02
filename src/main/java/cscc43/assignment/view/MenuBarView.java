@@ -7,14 +7,17 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import cscc43.assignment.App;
 import cscc43.assignment.controller.MenuBarController;
+import cscc43.assignment.controller.ReportController;
 import cscc43.assignment.controller.ViewController;
 import cscc43.assignment.store.AppState;
 import cscc43.assignment.viewmodel.SearchResult;
@@ -39,18 +42,37 @@ public class MenuBarView implements View {
         
         // Menu > Data > Insert > Book
         menuItemView = new JMenuItem("Book");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_BOOK));
-        menuItemView.addActionListener(new SetBookAction());
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                Book book = new Book().initialize();
+                MenuBarController.getInstance().setBook(book);
+                MenuBarController.getInstance().setPage(AppState.Pages.INSERT_BOOK);
+            }
+        });
         submenuView.add(menuItemView);
         // Menu > Data > Insert > Music
         menuItemView = new JMenuItem("Music");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_MUSIC));
-        menuItemView.addActionListener(new SetMusicTracksAction());
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                List<Music> musicTracks = new ArrayList<Music>();
+                musicTracks.add(new Music().initialize());
+                MenuBarController.getInstance().setMusicTracks(musicTracks);
+                MenuBarController.getInstance().setPage(AppState.Pages.INSERT_MUSIC);
+            }
+        });
         submenuView.add(menuItemView);
         // Menu > Data > Insert > Movie
         menuItemView = new JMenuItem("Movie");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_MOVIE));
-        menuItemView.addActionListener(new SetMovieAction());
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                Movie movie = new Movie().initialize();
+                MenuBarController.getInstance().setMovie(movie);
+                MenuBarController.getInstance().setPage(AppState.Pages.INSERT_MOVIE);
+            }
+        });
         submenuView.add(menuItemView);
         
         // Menu > Data > Update
@@ -73,53 +95,165 @@ public class MenuBarView implements View {
         menuBarView.add(menuView);
 
         // Menu > Report > R1
-        menuItemView = new JMenuItem("R1");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Authors' Publications");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+                InputStringView firstNameView = new InputStringView("First name");
+                panel.add(firstNameView.render());
+                InputStringView middleNameView = new InputStringView("Middle name");
+                panel.add(middleNameView.render());
+                InputStringView lastNameView = new InputStringView("Last name");
+                panel.add(lastNameView.render());
+                panel.revalidate();
+                panel.repaint();
+          
+                int result = JOptionPane.showConfirmDialog(
+                    App.getFrame(),
+                    panel,
+                    "Authors' Publications",
+                    JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    ReportController.getInstance().authorsPublications(
+                        firstNameView.getValue(),
+                        middleNameView.getValue(),
+                        lastNameView.getValue()
+                    );
+                    MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+                }
+            }
+        });
         menuView.add(menuItemView);
         
         // Menu > Report > R2
-        menuItemView = new JMenuItem("R2");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Publications in one Year");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                try {
+                    String year = JOptionPane.showInputDialog(
+                        App.getFrame(),
+                        "Year",
+                        "Publications in one Year",
+                        JOptionPane.PLAIN_MESSAGE);
+                    if (year != null) {
+                        ReportController.getInstance().publicationsInOneYear(Integer.parseInt(year));
+                        MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+                    }
+                } catch (NumberFormatException err) {
+                    JOptionPane.showMessageDialog(App.getFrame(), "Year must be a number");
+                    actionPerformed(e);
+                }
+            }
+        });
         menuView.add(menuItemView);
 
         // Menu > Report > R3
-        menuItemView = new JMenuItem("R3");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Books with Similar Topic");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                String subject = (String) JOptionPane.showInputDialog(
+                    App.getFrame(),
+                    "String representing the subject",
+                    "Books with Similar Topic",
+                    JOptionPane.PLAIN_MESSAGE);
+                if (subject != null) {
+                    ReportController.getInstance().booksWithSimilarTopic(subject);
+                    MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+                }
+            }
+        });
         menuView.add(menuItemView);
 
         // Menu > Report > R4
-        menuItemView = new JMenuItem("R4");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Frequent Publishers");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                ReportController.getInstance().frequentPublishers();
+                MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+            }
+        });
         menuView.add(menuItemView);
 
         // Menu > Report > R5
-        menuItemView = new JMenuItem("R5");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Most Popular Subjects");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                ReportController.getInstance().mostPopularSubjects();
+                MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+            }
+        });
         menuView.add(menuItemView);
 
         // Menu > Report > R6
-        menuItemView = new JMenuItem("R6");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Multi Skills Movie Crew");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                ReportController.getInstance().multiSkillsMovieCrew();
+                MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+            }
+        });
         menuView.add(menuItemView);
 
         // Menu > Report > R7
-        menuItemView = new JMenuItem("R7");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Award Winning Movies");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                ReportController.getInstance().awardWinningMovies();
+                MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+            }
+        });
         menuView.add(menuItemView);
 
         // Menu > Report > R8
-        menuItemView = new JMenuItem("R8");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Music with Similar Name");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                ReportController.getInstance().musicWithSimilarName();
+                MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+            }
+        });
         menuView.add(menuItemView);
 
         // Menu > Report > R9
-        menuItemView = new JMenuItem("R9");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Multi Skills Music Crew");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                ReportController.getInstance().multiSkillsMusicCrew();
+                MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+            }
+        });
         menuView.add(menuItemView);
 
         // Menu > Report > R10
-        menuItemView = new JMenuItem("R10");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.REPORT));
+        menuItemView = new JMenuItem("Similar Names");
+        menuItemView.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MenuBarController.getInstance().setPage(-1);
+                ReportController.getInstance().similarNames();
+                MenuBarController.getInstance().setPage(AppState.Pages.REPORT);
+            }
+        });
         menuView.add(menuItemView);
 
         return menuBarView;
@@ -134,43 +268,6 @@ public class MenuBarView implements View {
 
         public void actionPerformed(ActionEvent e) {
             MenuBarController.getInstance().setPage(this.page);
-        }
-    }
-
-    private class SetBookAction implements ActionListener {
-        private Book book;
-
-        public SetBookAction() {
-            this.book = new Book().initialize();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            MenuBarController.getInstance().setBook(this.book);
-        }
-    }
-
-    private class SetMovieAction implements ActionListener {
-        private Movie movie;
-
-        public SetMovieAction() {
-            this.movie = new Movie().initialize();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            MenuBarController.getInstance().setMovie(this.movie);
-        }
-    }
-
-    private class SetMusicTracksAction implements ActionListener {
-        private List<Music> musicTracks;
-
-        public SetMusicTracksAction() {
-            this.musicTracks = new ArrayList<Music>();
-            this.musicTracks.add(new Music().initialize());
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            MenuBarController.getInstance().setMusicTracks(this.musicTracks);
         }
     }
 

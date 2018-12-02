@@ -2,8 +2,14 @@
 
 ## Bundling and compiling using javac
 
+Navigate to https://dev.mysql.com/downloads/connector/j/8.0.html download
+**mysql-connector-java-5.1.47.zip** by clicking on **Looking for the latest GA Version?**
+Unzip and copy **mysql-connector-java-5.1.47-bin.jar** to the root directory
+
 ```sh
-./bundle.sh > ./App.java && javac App.java && java App
+./bundle.sh > ./App.java
+javac App.java
+java -cp ".:mysql-connector-java-5.1.47-bin.jar" App
 ```
 
 ## Running using maven

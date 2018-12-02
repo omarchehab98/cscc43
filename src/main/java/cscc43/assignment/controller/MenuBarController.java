@@ -4,8 +4,10 @@ import java.util.List;
 
 import cscc43.assignment.App;
 import cscc43.assignment.model.Book;
+import cscc43.assignment.model.CrewMember;
 import cscc43.assignment.model.Movie;
 import cscc43.assignment.model.Music;
+import cscc43.assignment.model.Award;
 import cscc43.assignment.repository.BookRepository;
 import cscc43.assignment.repository.MovieRepository;
 import cscc43.assignment.repository.MusicRepository;
@@ -56,6 +58,13 @@ public class MenuBarController {
         }
         Movie movie = movieRepository.findOneByName(name);
         if (movie != null) {
+            for (Award award : movie.getAwards()) {
+                for (CrewMember crewMember : movie.getCrewMembers()) {
+                    if (crewMember.getPerson().getId().equals(award.getPerson().getId())) {
+                        crewMember.setAward(award);
+                    }
+                }
+            }
             return movie;
         }
         List<Music> music = musicRepository.findByAlbumName(name);

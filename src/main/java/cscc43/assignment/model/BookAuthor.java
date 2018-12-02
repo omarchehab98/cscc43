@@ -46,4 +46,12 @@ public class BookAuthor {
     public void setPerson(Person person) {
         this.person = person;
     }
+
+    public String toString() {
+        return String.format(
+            "BookAuthor(%s, %s)",
+            book,
+            person
+        );
+    }
 }

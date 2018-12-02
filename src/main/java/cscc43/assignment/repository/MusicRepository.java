@@ -13,7 +13,11 @@ public class MusicRepository extends Repository<Music> {
 
     public List<Music> findByAlbumName(String albumName) {
         String where = String.format("`%s`=?", columnName(Music.class, "albumName"));
-        return findWhere(where, albumName);
+        List<Music> musicTracks = findWhere(where, albumName);
+        for (int i = 0; i < musicTracks.size(); i++) {
+            musicTracks.set(i, (Music) populate(musicTracks.get(i), null));
+        }
+        return musicTracks;
     }
 
     public boolean deleteByAlbumName(String albumName) {

@@ -20,6 +20,7 @@ public class InputMusicTracksView implements View {
     private List<MusicTrackView> musicTrackViews;
     private List<Music> defaultMusicTracks;
     private int numberOfTracks = 0;
+    private boolean isPrimaryKeyEditable = true;
     private final int minTracks = 1;
     private final int maxTracks = Integer.MAX_VALUE;
 
@@ -47,6 +48,11 @@ public class InputMusicTracksView implements View {
         return this;
     }
 
+    public InputMusicTracksView setPrimaryKeyIsEditable(boolean isPrimaryKeyEditable) {
+        this.isPrimaryKeyEditable = isPrimaryKeyEditable;
+        return this;
+    }
+
     private void insertTrack() {
         insertTrack(new Music().initialize());
     }
@@ -56,7 +62,8 @@ public class InputMusicTracksView implements View {
             panel.add(new HeadingView(String.format("Track %d", ++numberOfTracks)).render(), panel.getComponentCount() - 2);
             MusicTrackView musicTrackView = new MusicTrackView(
                 new InputStringView("Name")
-                    .setDefaultText(music.getMusicName()),
+                    .setDefaultText(music.getMusicName())
+                    .setIsEditable(isPrimaryKeyEditable),
                 new InputStringView("Language")
                     .setDefaultText(music.getLanguage()),
                 new InputDropdownView("Disk type", new String[]{"CD", "Vinyle"})

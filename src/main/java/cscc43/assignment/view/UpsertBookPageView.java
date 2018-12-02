@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 import cscc43.assignment.App;
 import cscc43.assignment.controller.BookController;
 import cscc43.assignment.controller.MenuBarController;
-import cscc43.assignment.view.util.JTextFieldLimit;
 import cscc43.assignment.model.Book;
 import cscc43.assignment.store.AppState;
 import cscc43.assignment.throwable.BookUpsertException;
@@ -45,7 +44,8 @@ public class UpsertBookPageView implements Observer, View {
         panel.add(nameView.render());
         
         isbnView = new InputStringView("ISBN")
-            .setDefaultText(book.getIsbn());
+            .setDefaultText(book.getIsbn())
+            .setIsEditable(isInsert());
         panel.add(isbnView.render());
 
         publisherNameView = new InputStringView("Publisher name")
@@ -66,10 +66,9 @@ public class UpsertBookPageView implements Observer, View {
             .setDefaultNumber(book.getYearOfPublication())
             .setMin(0);
         panel.add(publicationYearView.render());
-            
+        
         descriptionView = new InputStringView("Description")
-            .setDefaultText(book.getDescription())
-            .setDocument(new JTextFieldLimit(5000));
+            .setDefaultText(book.getDescription());
         panel.add(descriptionView.render());
             
         bookAuthorsView = new InputBookAuthorsView()
@@ -95,8 +94,6 @@ public class UpsertBookPageView implements Observer, View {
 
     private class SubmitAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            AppState state = App.getStore().getState();
-            boolean isInsert = state.getBook().getIsbn().equals("");
             
             Book book = new Book();
             book.setTitle(nameView.getValue());
@@ -110,7 +107,7 @@ public class UpsertBookPageView implements Observer, View {
             book.setBookKeywords(bookKeywordsView.getValue());
     
             try {
-                if (isInsert) {
+                if (isInsert()) {
                     BookController.getInstance().insert(book);
                 } else {
                     BookController.getInstance().update(book);
@@ -126,5 +123,10 @@ public class UpsertBookPageView implements Observer, View {
         public void actionPerformed(ActionEvent e) {
             MenuBarController.getInstance().setPage(-1);
         }
+    }
+
+    private boolean isInsert() {
+        AppState state = App.getStore().getState();
+        return state.getBook().getIsbn().equals("");
     }
 }

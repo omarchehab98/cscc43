@@ -25,7 +25,7 @@ public class Music {
     private String language;
     @Column(name="DiskType")
     private Integer diskType;
-    @OneToOne(targetEntity=Person.class)
+    @OneToOne(targetEntity=Person.class, mappedBy="producedMusic")
     @JoinColumn(name="Producer_ID", referencedColumnName="ID")
     private Person producer;
     @OneToMany(targetEntity=MusicSinger.class, mappedBy="music")
@@ -113,11 +113,19 @@ public class Music {
         this.musicSingers = musicSingers;
     }
 
+    public void setMusicSingers(ArrayList<MusicSinger> musicSingers) {
+        this.musicSingers = musicSingers;
+    }
+
     public List<MusicPerson> getMusicPersons() {
         return this.musicPersons;
     }
 
     public void setMusicPersons(List<MusicPerson> musicPersons) {
+        this.musicPersons = musicPersons;
+    }
+    
+    public void setMusicPersons(ArrayList<MusicPerson> musicPersons) {
         this.musicPersons = musicPersons;
     }
 

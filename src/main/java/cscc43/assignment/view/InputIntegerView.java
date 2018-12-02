@@ -16,12 +16,14 @@ public class InputIntegerView implements View {
     private int defaultNumber;
     private int min;
     private int max;
+    private boolean isEditable;
 
     public InputIntegerView(String label) {
         this.label = label;
         this.defaultNumber = 0;
         this.min = Integer.MIN_VALUE;
         this.max = Integer.MAX_VALUE;
+        this.isEditable = true;
     }
 
     public Component render() {
@@ -37,7 +39,10 @@ public class InputIntegerView implements View {
         labelView.setPreferredSize(new Dimension(150, 16));
         panelView.add(labelView);
 
-        spinnerView.setModel(new SpinnerNumberModel(this.defaultNumber, this.min, this.max, 1));
+        spinnerView.setModel(new SpinnerNumberModel(this.defaultNumber, this.min, this.max, this.isEditable ? 1 : 0));
+        ((JSpinner.DefaultEditor) spinnerView.getEditor())
+            .getTextField()
+            .setEditable(this.isEditable);
         spinnerView.setPreferredSize(new Dimension(300, 26));
         panelView.add(spinnerView);
 
@@ -56,6 +61,11 @@ public class InputIntegerView implements View {
 
     public InputIntegerView setMax(int max) {
         this.max = max;
+        return this;
+    }
+
+    public InputIntegerView setIsEditable(boolean isEditable) {
+        this.isEditable = isEditable;
         return this;
     }
 

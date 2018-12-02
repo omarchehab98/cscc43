@@ -62,6 +62,10 @@ public class Movie {
         this.crewMembers = crewMembers;
     }
 
+    public void setCrewMembers(ArrayList<CrewMember> crewMembers) {
+        this.crewMembers = crewMembers;
+    }
+
     public List<Award> getAwards() {
         return this.awards;
     }
@@ -70,10 +74,14 @@ public class Movie {
         this.awards = awards;
     }
 
+    public void setAwards(ArrayList<Award> awards) {
+        this.awards = awards;
+    }
+
     public List<CrewMember> getCrewMembersDirectors() {
         List<CrewMember> directors = new ArrayList<CrewMember>();
         for (CrewMember crewMember : crewMembers) {
-            if (crewMember.getRole().getDescription() == "Director") {
+            if (crewMember.getRole().getDescription().equals("Director")) {
                 directors.add(crewMember);
             }
         }
@@ -83,7 +91,7 @@ public class Movie {
     public List<CrewMember> getCrewMembersScriptWriters() {
         List<CrewMember> scriptWriters = new ArrayList<CrewMember>();
         for (CrewMember crewMember : crewMembers) {
-            if (crewMember.getRole().getDescription() == "Script Writer") {
+            if (crewMember.getRole().getDescription().equals("Script Writer")) {
                 scriptWriters.add(crewMember);
             }
         }
@@ -93,7 +101,7 @@ public class Movie {
     public List<CrewMember> getCrewMembersCast() {
         List<CrewMember> scriptWriters = new ArrayList<CrewMember>();
         for (CrewMember crewMember : crewMembers) {
-            if (crewMember.getRole().getDescription() == "Cast") {
+            if (crewMember.getRole().getDescription().equals("Cast")) {
                 scriptWriters.add(crewMember);
             }
         }
@@ -103,7 +111,7 @@ public class Movie {
     public List<CrewMember> getCrewMembersProducers() {
         List<CrewMember> producers = new ArrayList<CrewMember>();
         for (CrewMember crewMember : crewMembers) {
-            if (crewMember.getRole().getDescription() == "Movie Producer") {
+            if (crewMember.getRole().getDescription().equals("Movie Producer")) {
                 producers.add(crewMember);
             }
         }
@@ -113,7 +121,7 @@ public class Movie {
     public List<CrewMember> getCrewMembersComposers() {
         List<CrewMember> composers = new ArrayList<CrewMember>();
         for (CrewMember crewMember : crewMembers) {
-            if (crewMember.getRole().getDescription() == "Composer") {
+            if (crewMember.getRole().getDescription().equals("Composer")) {
                 composers.add(crewMember);
             }
         }
@@ -123,7 +131,7 @@ public class Movie {
     public List<CrewMember> getCrewMembersEditors() {
         List<CrewMember> editors = new ArrayList<CrewMember>();
         for (CrewMember crewMember : crewMembers) {
-            if (crewMember.getRole().getDescription() == "Movie Editor") {
+            if (crewMember.getRole().getDescription().equals("Movie Editor")) {
                 editors.add(crewMember);
             }
         }
@@ -133,11 +141,18 @@ public class Movie {
     public List<CrewMember> getCrewMembersCostumeDesigners() {
         List<CrewMember> costumeDesigners = new ArrayList<CrewMember>();
         for (CrewMember crewMember : crewMembers) {
-            if (crewMember.getRole().getDescription() == "Costume Designer") {
+            if (crewMember.getRole().getDescription().equals("Costume Designer")) {
                 costumeDesigners.add(crewMember);
             }
         }
         return costumeDesigners;
     }
 
+    public String toString() {
+        return String.format(
+            "Movie(%s, %d)",
+            name,
+            year
+        );
+    }
 }

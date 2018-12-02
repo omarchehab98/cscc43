@@ -21,6 +21,9 @@ public class PersonRepository extends Repository<Person> {
         Person newPerson = findOneByName(person);
         if (newPerson == null) {
             newPerson = insertOne(person);
+        } else {
+            newPerson.setGender(person.getGender());
+            updateOne(newPerson);
         }
         return newPerson;
     }

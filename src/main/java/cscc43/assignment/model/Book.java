@@ -120,11 +120,26 @@ public class Book {
         this.bookAuthors = bookAuthors;
     }
 
+    public void setBookAuthors(ArrayList<BookAuthor> bookAuthors) {
+        this.bookAuthors = bookAuthors;
+    }
+
     public List<BookKeyword> getBookKeywords() {
         return this.bookKeywords;
     }
 
     public void setBookKeywords(List<BookKeyword> bookKeywords) {
         this.bookKeywords = bookKeywords;
+    }
+
+    public void setBookKeywords(ArrayList<BookKeyword> bookKeywords) {
+        this.bookKeywords = bookKeywords;
+    }
+
+    public String toString() {
+        return String.format(
+            "Book(%s, %s, %s, %d, %d, %d, %s)",
+            isbn, title, publisher, numberOfPages, yearOfPublication, editionNumber, description
+        );
     }
 }

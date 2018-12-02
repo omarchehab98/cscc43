@@ -18,6 +18,9 @@ import cscc43.assignment.persistence.GeneratedValue;
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.JoinColumn;
 import cscc43.assignment.persistence.JoinColumns;
+import cscc43.assignment.persistence.ManyToOne;
+import cscc43.assignment.persistence.OneToMany;
+import cscc43.assignment.persistence.OneToOne;
 import cscc43.assignment.throwable.DatabaseException;
 
 public class Repository<T> {
@@ -89,8 +92,20 @@ public class Repository<T> {
     }
 
     public List<T> findByForeignEntity(String fieldName, Object foreignEntity) {
-        String[] columnNames = columnNames(entity, fieldName);
-        String[] referencedColumnNames = referencedColumnNames(entity, fieldName);
+        String[] columnNames;
+        try {
+            String columnName = columnName(entity, fieldName);
+            columnNames = new String[]{columnName};
+        } catch (IllegalArgumentException|DatabaseException err) {
+            columnNames = columnNames(entity, fieldName);
+        }
+        String[] referencedColumnNames;
+        try {
+            String referencedColumnName = referencedColumnName(entity, fieldName);
+            referencedColumnNames = new String[]{referencedColumnName};
+        } catch (IllegalArgumentException|DatabaseException err) {
+            referencedColumnNames = referencedColumnNames(entity, fieldName);
+        }
         Object[] columnValues = new Object[referencedColumnNames.length];
         for (int i = 0; i < columnNames.length; i++) {
             columnNames[i] = String.format("`%s`=?", columnNames[i]);
@@ -98,6 +113,30 @@ public class Repository<T> {
         }
         String where = String.join(" AND ", columnNames);
         return findWhere(where, columnValues);
+    }
+
+    public T findOneByForeignEntity(String fieldName, Object foreignEntity) {
+        String[] columnNames;
+        try {
+            String columnName = columnName(entity, fieldName);
+            columnNames = new String[]{columnName};
+        } catch (DatabaseException err) {
+            columnNames = columnNames(entity, fieldName);
+        }
+        String[] referencedColumnNames;
+        try {
+            String referencedColumnName = referencedColumnName(entity, fieldName);
+            referencedColumnNames = new String[]{referencedColumnName};
+        } catch (DatabaseException err) {
+            referencedColumnNames = referencedColumnNames(entity, fieldName);
+        }
+        Object[] columnValues = new Object[referencedColumnNames.length];
+        for (int i = 0; i < columnNames.length; i++) {
+            columnNames[i] = String.format("`%s`=?", columnNames[i]);
+            columnValues[i] = invokeGetter(foreignEntity, getFieldNameFromColumnName(foreignEntity, referencedColumnNames[i]));
+        }
+        String where = String.join(" AND ", columnNames);
+        return findOneWhere(where, columnValues);
     }
 
     public T insertOne(T row) {
@@ -118,7 +157,7 @@ public class Repository<T> {
             );
             
             preparedStatement = Database.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            populateValues(preparedStatement, 1, row);
+            preparedStatementSetEntityValues(preparedStatement, 1, row);
 
             System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
@@ -156,7 +195,7 @@ public class Repository<T> {
             );
             
             preparedStatement = Database.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            populateValues(preparedStatement, 1, row);
+            preparedStatementSetEntityValues(preparedStatement, 1, row);
             Object[] idValues = getIdValues(row);
             for (int i = 0; i < idValues.length; i++) {
                 preparedStatement.setObject(updatableExpressionList.size() + 1 + i, idValues[i]);
@@ -229,6 +268,8 @@ public class Repository<T> {
         T row = (T) entity.newInstance();
         for (Field field : entity.getDeclaredFields()) {
             Column column = field.getAnnotation(Column.class);
+            Class foreignEntity = targetEntity(field);
+            JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
             if (column != null) {
                 field.setAccessible(true);
                 Object value = resultSet.getObject(column.name());
@@ -236,6 +277,15 @@ public class Repository<T> {
                     value = new Long((Integer) value);
                 }
                 field.set(row, value);
+            } else if (joinColumn != null) {
+                field.setAccessible(true);
+                Object value = resultSet.getObject(joinColumn.name());
+                if (value instanceof Integer && field.getType().equals(Long.class)) {
+                    value = new Long((Integer) value);
+                }
+                Object foreignObject = foreignEntity.newInstance();
+                invokeSetter(foreignObject, getFieldNameFromColumnName(foreignObject, joinColumn.referencedColumnName()), value);
+                field.set(row, foreignObject);
             }
         }
         return row;
@@ -254,6 +304,65 @@ public class Repository<T> {
             }
         }
         return row;
+    }
+
+    protected Repository instantiateRepository(String targetEntity) {
+        try {
+            Class<?> repositoryClass = Class.forName(String.format("cscc43.assignment.repository.%sRepository", targetEntity));
+            return (Repository) repositoryClass.newInstance();
+        } catch (ClassNotFoundException|InstantiationException|IllegalAccessException err) {
+            err.printStackTrace();
+            throw new DatabaseException(err.getMessage());
+        }
+    }
+
+    protected Object populate(Object object, String ignoreFieldName) {
+        if (object == null) {
+            return null;
+        }
+        if (object instanceof List) {
+            List objects = (List) object;
+            // System.out.format("crawling: %s\n", object.getClass().getName());
+            for (int i = 0; i < objects.size(); i++) {
+                objects.set(i, populate(objects.get(i), ignoreFieldName));
+            }
+            return objects;
+        }
+        // System.out.format("crawling: %s ignoring %s\n", object.getClass().getName(), ignoreFieldName);
+        for (Field field : object.getClass().getDeclaredFields()) {
+            OneToOne oneToOne = field.getAnnotation(OneToOne.class);
+            OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+            ManyToOne manyToOne = field.getAnnotation(ManyToOne.class);
+            Class targetEntity = targetEntity(field);
+            if (oneToOne != null && !field.getName().equals(ignoreFieldName)) {
+                Repository targetRepository = instantiateRepository(targetEntity.getSimpleName());
+                Object fieldValue = targetRepository.findOne(invokeGetter(object, field.getName()));
+                invokeSetter(object, field.getName(), fieldValue);
+            } else if (oneToMany != null && !field.getName().equals(ignoreFieldName)) {
+                Repository targetRepository = instantiateRepository(targetEntity.getSimpleName());
+                List foreignObjects = targetRepository.findByForeignEntity(oneToMany.mappedBy(), object);
+                for (Object foreignObject : foreignObjects) {
+                    invokeSetter(foreignObject, oneToMany.mappedBy(), object);
+                }
+                // System.out.println(foreignObjects);
+                invokeSetter(object, field.getName(), populate(foreignObjects, oneToMany.mappedBy()));
+            } else if (manyToOne != null && !field.getName().equals(ignoreFieldName)) {
+                Repository targetRepository = instantiateRepository(targetEntity.getSimpleName());
+                Object fieldValue = targetRepository.findOne(invokeGetter(object, field.getName()));
+                invokeSetter(object, field.getName(), fieldValue);
+            }
+        }
+        return object;
+    }
+
+    protected Class targetEntity(Field field) {
+        OneToOne oneToOne = field.getAnnotation(OneToOne.class);
+        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+        ManyToOne manyToOne = field.getAnnotation(ManyToOne.class);
+        if (oneToOne != null) return oneToOne.targetEntity();
+        if (oneToMany != null) return oneToMany.targetEntity();
+        if (manyToOne != null) return manyToOne.targetEntity();
+        return null;
     }
 
     protected Object[] getIdValues(T row) {
@@ -282,7 +391,7 @@ public class Repository<T> {
         return result.toArray();
     }
 
-    protected void populateValues(PreparedStatement preparedStatement, int index, T row) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    protected void preparedStatementSetEntityValues(PreparedStatement preparedStatement, int index, T row) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         int i = 0;
         for (Field field : entity.getDeclaredFields()) {
             Column column = field.getAnnotation(Column.class);
@@ -357,8 +466,6 @@ public class Repository<T> {
     }
 
     protected String getFieldNameFromColumnName(Object object, String columnName) {
-        System.out.println(String.format("object %s", object));
-        System.out.println(String.format("columnName %s", columnName));
         for (Field field : object.getClass().getDeclaredFields()) {
             Column column = field.getAnnotation(Column.class);
             if (column != null && column.name().equals(columnName)) {
@@ -434,6 +541,19 @@ public class Repository<T> {
             throw new DatabaseException(err.getMessage());
         }
     }
+
+    protected Object invokeSetter(Object instance, String name, Object value) {
+        try {
+            Method method = instance.getClass().getMethod(String.format(
+                "set%s",
+                name.substring(0, 1).toUpperCase() + name.substring(1)
+            ), new Class[]{value.getClass()});
+            return method.invoke(instance, value);
+        } catch (NoSuchMethodException|IllegalAccessException|InvocationTargetException err) {
+            err.printStackTrace();
+            throw new DatabaseException(err.getMessage());
+        }
+    }
     
     protected void tryClose(PreparedStatement preparedStatement, ResultSet resultSet) {
         try {
@@ -481,6 +601,21 @@ public class Repository<T> {
                 }
                 String[] resultArr = new String[result.size()];
                 return result.toArray(resultArr);
+            }
+            throw new IllegalArgumentException();
+        } catch (NoSuchFieldException err) {
+            err.printStackTrace();
+            throw new DatabaseException(err.getMessage());
+        }
+    }
+
+    protected static String referencedColumnName(Class entity, String fieldName) {
+        try {
+            Field field = entity.getDeclaredField(fieldName);
+            List<String> result = new ArrayList<String>();
+            JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
+            if (joinColumn != null) {
+                return joinColumn.referencedColumnName();
             }
             throw new IllegalArgumentException();
         } catch (NoSuchFieldException err) {

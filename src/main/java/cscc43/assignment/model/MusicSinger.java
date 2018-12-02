@@ -51,4 +51,12 @@ public class MusicSinger {
     public void setPerson(Person person) {
         this.person = person;
     }
+
+    public String toString() {
+        return String.format(
+            "MusicSinger(%s, %s)",
+            music,
+            person
+        );
+    }
 }

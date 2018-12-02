@@ -8,18 +8,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.text.Document;
 
 public class InputStringView implements View {
     private final String label;
     private JTextField textFieldView;
     private String defaultText;
-    private Document document;
+    private boolean isEditable;
 
     public InputStringView(String label) {
         this.label = label;
         this.defaultText = "";
-        this.document = null;
+        this.isEditable = true;
     }
 
     public Component render() {
@@ -36,10 +35,8 @@ public class InputStringView implements View {
         panelView.add(labelView);
 
         textFieldView.setText(this.defaultText);
-        if (this.document != null) {
-            textFieldView.setDocument(this.document);
-        }
         textFieldView.setPreferredSize(new Dimension(300, 26));
+        textFieldView.setEditable(isEditable);
         panelView.add(textFieldView);
 
         return panelView;
@@ -50,8 +47,8 @@ public class InputStringView implements View {
         return this;
     }
 
-    public InputStringView setDocument(Document document) {
-        this.document = document;
+    public InputStringView setIsEditable(boolean isEditable) {
+        this.isEditable = isEditable;
         return this;
     }
 

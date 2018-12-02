@@ -46,4 +46,12 @@ public class BookKeyword {
     public void setKeyword(Keyword keyword) {
         this.keyword = keyword;
     }
+
+    public String toString() {
+        return String.format(
+            "BookKeyword(%s, %s)",
+            book,
+            keyword
+        );
+    }
 }

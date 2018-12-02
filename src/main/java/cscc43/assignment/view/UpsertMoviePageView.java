@@ -47,12 +47,14 @@ public class UpsertMoviePageView implements Observer, View {
         panel.add(new HeadingView("Movie").render());
 
         nameView = new InputStringView("Name")
-            .setDefaultText(movie.getName());
+            .setDefaultText(movie.getName())
+            .setIsEditable(isInsert());
         panel.add(nameView.render());
         
         yearOfReleaseView = new InputIntegerView("Year of release")
             .setDefaultNumber(movie.getYear())
-            .setMin(0);
+            .setMin(0)
+            .setIsEditable(isInsert());
         panel.add(yearOfReleaseView.render());
 
         directorView = new InputMovieCrewMembersView(roleRepository.findOneByDescription("Director"))
@@ -105,9 +107,6 @@ public class UpsertMoviePageView implements Observer, View {
 
     private class SubmitAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            AppState state = App.getStore().getState();
-            boolean isInsert = state.getMovie().getName().equals("");
-            
             Movie movie = new Movie();
             movie.setName(nameView.getValue());
             movie.setYear(yearOfReleaseView.getValue());
@@ -126,7 +125,7 @@ public class UpsertMoviePageView implements Observer, View {
             movie.setAwards(awards);
     
             try {
-                if (isInsert) {
+                if (isInsert()) {
                     MovieController.getInstance().insert(movie);
                 } else {
                     MovieController.getInstance().update(movie);
@@ -142,5 +141,10 @@ public class UpsertMoviePageView implements Observer, View {
         public void actionPerformed(ActionEvent e) {
             MenuBarController.getInstance().setPage(-1);
         }
+    }
+
+    private boolean isInsert() {
+        AppState state = App.getStore().getState();
+        return state.getMovie().getName().equals("");
     }
 }

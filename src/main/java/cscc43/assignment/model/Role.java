@@ -42,6 +42,10 @@ public class Role {
         return this.id;
     }
 
+    public void setId(Integer id) {
+        this.id = new Long(id);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

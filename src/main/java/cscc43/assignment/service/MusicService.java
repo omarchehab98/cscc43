@@ -77,7 +77,6 @@ public class MusicService {
             for (Music music : musicTracks) {
                 musicSingerRepository.deleteByMusic(music);
                 musicPersonRepository.deleteByMusic(music);
-                System.out.println(music);
                 isDeleted |= musicRepository.deleteOne(music);
             }
             Database.commit();

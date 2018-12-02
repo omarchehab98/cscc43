@@ -41,12 +41,14 @@ public class UpsertMusicPageView implements Observer, View {
         panel.add(new HeadingView("Album").render());
 
         nameView = new InputStringView("Name")
-            .setDefaultText(musicAlbum.getAlbumName());
+            .setDefaultText(musicAlbum.getAlbumName())
+            .setIsEditable(isInsert());
         panel.add(nameView.render());
 
         yearPublishedView = new InputIntegerView("Year published")
             .setDefaultNumber(musicAlbum.getYear())
-            .setMin(0);
+            .setMin(0)
+            .setIsEditable(isInsert());
         panel.add(yearPublishedView.render());
 
         panel.add(new HeadingView("Producer").render());
@@ -64,7 +66,8 @@ public class UpsertMusicPageView implements Observer, View {
         panel.add(producerLastNameView.render());
 
         musicTrackViews = new InputMusicTracksView()
-            .setDefaultMusic(musicTracks);
+            .setDefaultMusic(musicTracks)
+            .setPrimaryKeyIsEditable(isInsert());
         panel.add(musicTrackViews.render());
 
         panel.add(new ButtonView("Submit", new SubmitAction()).render());
@@ -84,7 +87,6 @@ public class UpsertMusicPageView implements Observer, View {
         public void actionPerformed(ActionEvent e) {
             AppState state = App.getStore().getState();
             Music musicAlbum = state.getMusicTracks().get(0);
-            boolean isInsert = musicAlbum.getAlbumName().equals("");
             
             musicAlbum.setAlbumName(nameView.getValue());
             musicAlbum.setYear(yearPublishedView.getValue());
@@ -102,7 +104,7 @@ public class UpsertMusicPageView implements Observer, View {
             }
             
             try {
-                if (isInsert) {
+                if (isInsert()) {
                     MusicController.getInstance().insert(musicTracks);
                 } else {
                     MusicController.getInstance().update(musicTracks);
@@ -118,5 +120,11 @@ public class UpsertMusicPageView implements Observer, View {
         public void actionPerformed(ActionEvent e) {
             MenuBarController.getInstance().setPage(-1);
         }
+    }
+
+    private boolean isInsert() {
+        AppState state = App.getStore().getState();
+        Music musicAlbum = state.getMusicTracks().get(0);
+        return musicAlbum.getAlbumName().equals("");
     }
 }

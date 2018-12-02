@@ -33,6 +33,10 @@ public class Keyword {
         return this.id;
     }
 
+    public void setId(Integer id) {
+        this.id = new Long(id);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -51,5 +55,13 @@ public class Keyword {
 
     public void setBookKeywords(List<BookKeyword> bookKeywords) {
         this.bookKeywords = bookKeywords;
+    }
+
+    public String toString() {
+        return String.format(
+            "Keyword(%d, %s)",
+            id,
+            tag
+        );
     }
 }

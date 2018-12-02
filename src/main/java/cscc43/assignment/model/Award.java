@@ -78,4 +78,11 @@ public class Award {
         if (gender.equals("Yes")) return 1;
         throw new UnsupportedOperationException();
     }
+
+    public String toString() {
+        return String.format(
+            "Award(%d, %s, %s)",
+            award, person, movie
+        );
+    }
 }

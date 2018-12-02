@@ -75,4 +75,13 @@ public class CrewMember {
     public void setAward(Award award) {
         this.award = award;
     }
+
+    public String toString() {
+        return String.format(
+            "CrewMember(%s, %s, %s)",
+            person,
+            movie,
+            role
+        );
+    }
 }

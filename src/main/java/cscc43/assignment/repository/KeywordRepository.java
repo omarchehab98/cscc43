@@ -12,4 +12,12 @@ public class KeywordRepository extends Repository<Keyword> {
     public Keyword findOneByTag(Keyword keyword) {
         return findOneByTag(keyword.getTag());
     }
+
+    public Keyword upsertByTag(Keyword keyword) {
+        Keyword newKeyword = findOneByTag(keyword);
+        if (newKeyword == null) {
+            newKeyword = insertOne(keyword);
+        }
+        return newKeyword;
+    }
 }

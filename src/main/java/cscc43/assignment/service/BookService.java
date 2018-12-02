@@ -88,10 +88,7 @@ public class BookService {
         }
         for (BookKeyword bookKeyword : book.getBookKeywords()) {
             Keyword keyword = bookKeyword.getKeyword();
-            Keyword newKeyword = keywordRepository.findOneByTag(keyword);
-            if (newKeyword == null) {
-                newKeyword = keywordRepository.insertOne(keyword);
-            }
+            Keyword newKeyword = keywordRepository.upsertByTag(keyword);
             bookKeywordRepository.insertOne(new BookKeyword(newBook, newKeyword));
         }
     }

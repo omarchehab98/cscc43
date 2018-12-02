@@ -15,7 +15,9 @@ import javax.swing.JOptionPane;
 
 import cscc43.assignment.App;
 import cscc43.assignment.controller.MenuBarController;
+import cscc43.assignment.controller.ViewController;
 import cscc43.assignment.store.AppState;
+import cscc43.assignment.viewmodel.SearchResult;
 import cscc43.assignment.model.Book;
 import cscc43.assignment.model.Movie;
 import cscc43.assignment.model.Music;
@@ -63,7 +65,7 @@ public class MenuBarView implements View {
         
         // Menu > View
         menuButtonView = new JButton("View");
-        menuButtonView.addActionListener(new SetPageAction(AppState.Pages.VIEW));
+        menuButtonView.addActionListener(new ViewDialogAction());
         menuBarView.add(menuButtonView);
 
         // Menu > Report
@@ -202,9 +204,37 @@ public class MenuBarView implements View {
             String s = (String)JOptionPane.showInputDialog(App.getFrame(), "Entity name", "Remove", JOptionPane.PLAIN_MESSAGE);
             if (s != null) {
                 if (MenuBarController.getInstance().deleteEntityByName(s)) {
-                    MenuBarController.getInstance().setPage(AppState.Pages.VIEW);
+                    JOptionPane.showMessageDialog(App.getFrame(), "Entity has been deleted");
                 } else {
                     JOptionPane.showMessageDialog(App.getFrame(), "Entity not found");
+                }
+            }
+        }
+    }
+
+    private class ViewDialogAction implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            MenuBarController.getInstance().setPage(-1);
+            String type = (String) JOptionPane.showInputDialog(
+                App.getFrame(),
+                "What are you searching for?",
+                "Search",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                new Object[]{"Book", "Music", "Movie"},
+                "Book");
+            if (type != null) {
+                String term = (String) JOptionPane.showInputDialog(
+                    App.getFrame(),
+                    String.format("Enter %s name (or part of name)", type),
+                    "Search",
+                    JOptionPane.PLAIN_MESSAGE);
+                if (term != null) {
+                    if (ViewController.getInstance().search(type, term) != null) {
+                        MenuBarController.getInstance().setPage(AppState.Pages.VIEW);
+                    } else {
+                        JOptionPane.showMessageDialog(App.getFrame(), String.format("No %s Entity matches the name you entered", type));
+                    }
                 }
             }
         }

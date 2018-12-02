@@ -5,12 +5,14 @@ import java.util.List;
 import cscc43.assignment.model.Book;
 import cscc43.assignment.model.Movie;
 import cscc43.assignment.model.Music;
+import cscc43.assignment.viewmodel.SearchResult;
 
 public class AppState {
     private int page;
     private Book book;
     private Movie movie;
     private List<Music> musicTracks;
+    private SearchResult searchResult;
 
     public AppState() {}
 
@@ -48,6 +50,14 @@ public class AppState {
 
     public void setMusicTracks(List<Music> musicTracks) {
         this.musicTracks = musicTracks;
+    }
+    
+    public SearchResult getSearchResult() {
+        return this.searchResult;
+    }
+
+    public void setSearchResult(SearchResult searchResult) {
+        this.searchResult = searchResult;
     }
 
     public static class Pages {

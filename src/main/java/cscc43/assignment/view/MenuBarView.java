@@ -37,17 +37,17 @@ public class MenuBarView implements View {
         
         // Menu > Data > Insert > Book
         menuItemView = new JMenuItem("Book");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.UPSERT_BOOK));
+        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_BOOK));
         menuItemView.addActionListener(new SetBookAction());
         submenuView.add(menuItemView);
         // Menu > Data > Insert > Music
         menuItemView = new JMenuItem("Music");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.UPSERT_MUSIC));
+        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_MUSIC));
         menuItemView.addActionListener(new SetMusicTracksAction());
         submenuView.add(menuItemView);
         // Menu > Data > Insert > Movie
         menuItemView = new JMenuItem("Movie");
-        menuItemView.addActionListener(new SetPageAction(AppState.Pages.UPSERT_MOVIE));
+        menuItemView.addActionListener(new SetPageAction(AppState.Pages.INSERT_MOVIE));
         menuItemView.addActionListener(new SetMovieAction());
         submenuView.add(menuItemView);
         
@@ -176,9 +176,21 @@ public class MenuBarView implements View {
         public void actionPerformed(ActionEvent e) {
             String s = (String)JOptionPane.showInputDialog(App.getFrame(), "Entity name", "Update", JOptionPane.PLAIN_MESSAGE);
             if (s != null) {
-                MenuBarController.getInstance().setPage(AppState.Pages.UPSERT_BOOK);
-                // MenuBarController.getInstance().setPage(AppState.Pages.UPSERT_MOVIE);
-                // MenuBarController.getInstance().setPage(AppState.Pages.UPSERT_MUSIC);
+                Object entity = MenuBarController.getInstance().findEntityByName(s);
+                if (entity != null) {
+                    if (entity instanceof Book) {
+                        MenuBarController.getInstance().setBook((Book) entity);
+                        MenuBarController.getInstance().setPage(AppState.Pages.UPDATE_BOOK);
+                    } else if (entity instanceof Movie) {
+                        MenuBarController.getInstance().setMovie((Movie) entity);
+                        MenuBarController.getInstance().setPage(AppState.Pages.UPDATE_MOVIE);
+                    } else if (entity instanceof List) {
+                        MenuBarController.getInstance().setMusicTracks((List<Music>) entity);
+                        MenuBarController.getInstance().setPage(AppState.Pages.UPDATE_MUSIC);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(App.getFrame(), "Entity not found");
+                }
             }
         }
     }
@@ -187,7 +199,11 @@ public class MenuBarView implements View {
         public void actionPerformed(ActionEvent e) {
             String s = (String)JOptionPane.showInputDialog(App.getFrame(), "Entity name", "Remove", JOptionPane.PLAIN_MESSAGE);
             if (s != null) {
-                MenuBarController.getInstance().setPage(AppState.Pages.VIEW);
+                if (MenuBarController.getInstance().deleteEntityByName(s)) {
+                    MenuBarController.getInstance().setPage(AppState.Pages.VIEW);
+                } else {
+                    JOptionPane.showMessageDialog(App.getFrame(), "Entity not found");
+                }
             }
         }
     }

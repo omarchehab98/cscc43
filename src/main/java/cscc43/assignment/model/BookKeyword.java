@@ -1,14 +1,17 @@
 package cscc43.assignment.model;
 
 import cscc43.assignment.persistence.Entity;
+import cscc43.assignment.persistence.Id;
 import cscc43.assignment.persistence.JoinColumn;
 import cscc43.assignment.persistence.ManyToOne;
 
 @Entity(name="BookKeyword")
 public class BookKeyword {
+    @Id
     @ManyToOne(targetEntity=Book.class)
     @JoinColumn(name="ISBN", referencedColumnName="ISBN")
     private Book book;
+    @Id
     @ManyToOne(targetEntity=Keyword.class)
     @JoinColumn(name="Keyword_ID", referencedColumnName="ID")
     private Keyword keyword;

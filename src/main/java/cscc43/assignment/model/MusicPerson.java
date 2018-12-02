@@ -2,11 +2,12 @@ package cscc43.assignment.model;
 
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
+import cscc43.assignment.persistence.Id;
 import cscc43.assignment.persistence.JoinColumn;
 import cscc43.assignment.persistence.JoinColumns;
 import cscc43.assignment.persistence.ManyToOne;
 
-@Entity(name="MusicPerson")
+@Entity(name="PeopleInvolvedMusic")
 public class MusicPerson {
     @Column(name="IsSongWriter")
     private Integer isSongwriter;
@@ -14,6 +15,7 @@ public class MusicPerson {
     private Integer isComposer;
     @Column(name="IsArranger")
     private Integer isArranger;
+    @Id
     @ManyToOne(targetEntity=Music.class)
     @JoinColumns({
         @JoinColumn(name="AlbumName", referencedColumnName="AlbumName"),
@@ -21,6 +23,7 @@ public class MusicPerson {
         @JoinColumn(name="MusicName", referencedColumnName="MusicName")
     })
     private Music music;
+    @Id
     @ManyToOne(targetEntity=Person.class)
     @JoinColumn(name="PeopleInvolved_ID", referencedColumnName="ID")
     private Person person;

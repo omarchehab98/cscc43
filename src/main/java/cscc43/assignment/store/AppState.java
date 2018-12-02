@@ -51,10 +51,13 @@ public class AppState {
     }
 
     public static class Pages {
-        public static final int UPSERT_BOOK = 0;
-        public static final int UPSERT_MUSIC = 1;
-        public static final int UPSERT_MOVIE = 2;
-        public static final int VIEW = 3;
-        public static final int REPORT = 4;
+        public static final int INSERT_BOOK = 0;
+        public static final int INSERT_MUSIC = 1;
+        public static final int INSERT_MOVIE = 2;
+        public static final int UPDATE_BOOK = 3;
+        public static final int UPDATE_MUSIC = 4;
+        public static final int UPDATE_MOVIE = 5;
+        public static final int VIEW = 6;
+        public static final int REPORT = 7;
     }
 }

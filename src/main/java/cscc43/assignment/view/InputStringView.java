@@ -12,6 +12,7 @@ import javax.swing.text.Document;
 
 public class InputStringView implements View {
     private final String label;
+    private JTextField textFieldView;
     private String defaultText;
     private Document document;
 
@@ -24,7 +25,7 @@ public class InputStringView implements View {
     public Component render() {
         JPanel panelView = new JPanel();
         JLabel labelView = new JLabel();
-        JTextField textFieldView = new JTextField();
+        textFieldView = new JTextField();
         
         panelView.setPreferredSize(new Dimension(450, 26));
         panelView.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -52,5 +53,9 @@ public class InputStringView implements View {
     public InputStringView setDocument(Document document) {
         this.document = document;
         return this;
+    }
+
+    public String getValue() {
+        return textFieldView.getText();
     }
 }

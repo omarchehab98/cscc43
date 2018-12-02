@@ -3,6 +3,8 @@ package cscc43.assignment.model;
 import java.util.List;
 import java.util.ArrayList;
 
+import cscc43.assignment.persistence.Id;
+import cscc43.assignment.persistence.GeneratedValue;
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
 import cscc43.assignment.persistence.OneToMany;
@@ -10,13 +12,15 @@ import cscc43.assignment.persistence.OneToOne;
 
 @Entity(name="PeopleInvolved")
 public class Person {
+    @Id
+    @GeneratedValue
     @Column(name="ID")
-    private Integer id;
+    private Long id;
     @Column(name="FirstName")
     private String firstName;
     @Column(name="MiddleName")
     private String middleName;
-    @Column(name="LastName")
+    @Column(name="FamilyName")
     private String lastName;
     @Column(name="Gender")
     private Integer gender;
@@ -34,10 +38,18 @@ public class Person {
     private Music producedMusic;
 
     public Person() {
-        this(-1, "", "", "", Gender.MALE, new ArrayList<BookAuthor>(), new ArrayList<CrewMember>(), new ArrayList<Award>(), new ArrayList<MusicSinger>(), new ArrayList<MusicPerson>(), null);
+        this(-1l, "", "", "", 0, new ArrayList<BookAuthor>(), new ArrayList<CrewMember>(), new ArrayList<Award>(), new ArrayList<MusicSinger>(), new ArrayList<MusicPerson>(), null);
     }
 
-    public Person(Integer id, String firstName, String middleName, String lastName, Integer gender, List<BookAuthor> bookAuthors, List<CrewMember> crewMembers, List<Award> awards, List<MusicSinger> musicSingers, List<MusicPerson> musicPersons, Music producedMusic) {
+    public Person(Long id) {
+        this(id, "", "", "", 0, new ArrayList<BookAuthor>(), new ArrayList<CrewMember>(), new ArrayList<Award>(), new ArrayList<MusicSinger>(), new ArrayList<MusicPerson>(), null);
+    }
+
+    public Person(String firstName, String middleName, String lastName, Integer gender) {
+        this(-1l, firstName, middleName, lastName, gender, new ArrayList<BookAuthor>(), new ArrayList<CrewMember>(), new ArrayList<Award>(), new ArrayList<MusicSinger>(), new ArrayList<MusicPerson>(), null);
+    }
+
+    public Person(Long id, String firstName, String middleName, String lastName, Integer gender, List<BookAuthor> bookAuthors, List<CrewMember> crewMembers, List<Award> awards, List<MusicSinger> musicSingers, List<MusicPerson> musicPersons, Music producedMusic) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -51,11 +63,11 @@ public class Person {
         this.producedMusic = producedMusic;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -139,23 +151,30 @@ public class Person {
         this.producedMusic = producedMusic;
     }
 
-    public static class Gender {
-        public static final Integer FEMALE = 0;
-        public static final Integer MALE = 1;
+    public String toString() {
+        return String.format(
+            "Person(%d, %s, %s, %s, %d)",
+            id,
+            firstName,
+            middleName,
+            lastName,
+            gender
+        );
+    }
 
+    public static class Gender {
         private Gender() {}
 
         public static String toString(Integer gender) {
-            switch (gender) {
-                case 0:
-                    return "Female";
+            if (gender == 0) return "Female";
+            if (gender == 1) return "Male";
+            throw new UnsupportedOperationException();
+        }
 
-                case 1:
-                    return "Male";
-                    
-                default:
-                    throw new UnsupportedOperationException();
-            }
+        public static Integer fromString(String gender) {
+            if (gender.equals("Female")) return 0;
+            if (gender.equals("Male")) return 1;
+            throw new UnsupportedOperationException();
         }
     }
 }

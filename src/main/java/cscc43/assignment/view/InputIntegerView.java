@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 
 public class InputIntegerView implements View {
     private final String label;
+    private JSpinner spinnerView;
     private int defaultNumber;
     private int min;
     private int max;
@@ -26,7 +27,7 @@ public class InputIntegerView implements View {
     public Component render() {
         JPanel panelView = new JPanel();
         JLabel labelView = new JLabel();
-        JSpinner spinnerView = new JSpinner();
+        spinnerView = new JSpinner();
         
         panelView.setPreferredSize(new Dimension(450, 26));
         panelView.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -56,5 +57,9 @@ public class InputIntegerView implements View {
     public InputIntegerView setMax(int max) {
         this.max = max;
         return this;
+    }
+
+    public Integer getValue() {
+        return (Integer) spinnerView.getModel().getValue();
     }
 }

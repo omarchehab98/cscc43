@@ -3,14 +3,17 @@ package cscc43.assignment.model;
 import java.util.List;
 import java.util.ArrayList;
 
+import cscc43.assignment.persistence.Id;
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
 import cscc43.assignment.persistence.OneToMany;
 
 @Entity(name="Movie")
 public class Movie {
+    @Id
     @Column(name="MovieName")
-    private String movieName;
+    private String name;
+    @Id
     @Column(name="Year")
     private Integer year;
     @OneToMany(targetEntity=CrewMember.class, mappedBy="movie")
@@ -22,8 +25,8 @@ public class Movie {
         this("", 0, new ArrayList<CrewMember>(), new ArrayList<Award>());
     }
 
-    public Movie(String movieName, Integer year, List<CrewMember> crewMembers, List<Award> awards) {
-        this.movieName = movieName;
+    public Movie(String name, Integer year, List<CrewMember> crewMembers, List<Award> awards) {
+        this.name = name;
         this.year = year;
         this.crewMembers = crewMembers;
         this.awards = awards;
@@ -35,12 +38,12 @@ public class Movie {
         return this;
     }
 
-    public String getMovieName() {
-        return this.movieName;
+    public String getName() {
+        return this.name;
     }
 
-    public void setMovieName(String movieName) {
-        this.movieName = movieName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getYear() {

@@ -3,6 +3,7 @@ package cscc43.assignment.model;
 import java.util.List;
 import java.util.ArrayList;
 
+import cscc43.assignment.persistence.Id;
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
 import cscc43.assignment.persistence.JoinColumn;
@@ -11,10 +12,13 @@ import cscc43.assignment.persistence.OneToOne;
 
 @Entity(name="Music")
 public class Music {
+    @Id
     @Column(name="AlbumName")
     private String albumName;
+    @Id
     @Column(name="Year")
     private Integer year;
+    @Id
     @Column(name="MusicName")
     private String musicName;
     @Column(name="Language")
@@ -22,7 +26,7 @@ public class Music {
     @Column(name="DiskType")
     private Integer diskType;
     @OneToOne(targetEntity=Person.class)
-    @JoinColumn(name="Producer_ID")
+    @JoinColumn(name="Producer_ID", referencedColumnName="ID")
     private Person producer;
     @OneToMany(targetEntity=MusicSinger.class, mappedBy="music")
     private List<MusicSinger> musicSingers;
@@ -142,5 +146,28 @@ public class Music {
             }
         }
         return null;
+    }
+
+    public String toString() {
+        return String.format(
+            "Music(%s, %d, %s, %s, %d, %s)",
+            albumName, year, musicName, language, diskType, producer
+        );
+    }
+
+    public static class DiskType {
+        private DiskType() {}
+
+        public static String toString(Integer diskType) {
+            if (diskType == 0) return "CD";
+            if (diskType == 1) return "Vinyle";
+            throw new UnsupportedOperationException();
+        }
+
+        public static Integer fromString(String diskType) {
+            if (diskType.equals("CD")) return 0;
+            if (diskType.equals("Vinyle")) return 1;
+            throw new UnsupportedOperationException();
+        }
     }
 }

@@ -2,34 +2,38 @@ package cscc43.assignment.model;
 
 import java.util.List;
 
+import cscc43.assignment.persistence.Id;
+import cscc43.assignment.persistence.GeneratedValue;
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
 import cscc43.assignment.persistence.OneToMany;
 
 @Entity(name="Keyword")
 public class Keyword {
+    @Id
+    @GeneratedValue
     @Column(name="ID")
-    private Integer id;
+    private Long id;
     @Column(name="Tag")
     private String tag;
     @OneToMany(targetEntity=BookKeyword.class, mappedBy="keyword")
     private List<BookKeyword> bookKeywords;
 
     public Keyword() {
-        this(-1, "", null);
+        this(-1l, "", null);
     }
 
-    public Keyword(Integer id, String tag, List<BookKeyword> bookKeywords) {
+    public Keyword(Long id, String tag, List<BookKeyword> bookKeywords) {
         this.id = id;
         this.tag = tag;
         this.bookKeywords = bookKeywords;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

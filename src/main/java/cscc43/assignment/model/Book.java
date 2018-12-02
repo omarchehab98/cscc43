@@ -3,12 +3,14 @@ package cscc43.assignment.model;
 import java.util.List;
 import java.util.ArrayList;
 
+import cscc43.assignment.persistence.Id;
 import cscc43.assignment.persistence.Column;
 import cscc43.assignment.persistence.Entity;
 import cscc43.assignment.persistence.OneToMany;
 
 @Entity(name="Book")
 public class Book {
+    @Id
     @Column(name="ISBN")
     private String isbn;
     @Column(name="Title")
@@ -30,6 +32,10 @@ public class Book {
 
     public Book() {
         this("", "", "", 0, 0, 0, "", new ArrayList<BookAuthor>(), new ArrayList<BookKeyword>());
+    }
+
+    public Book(String isbn) {
+        this(isbn, "", "", 0, 0, 0, "", new ArrayList<BookAuthor>(), new ArrayList<BookKeyword>());
     }
 
     public Book(String isbn, String title, String publisher, Integer numberOfPages, Integer yearOfPublication, Integer editionNumber, String description, List<BookAuthor> bookAuthors, List<BookKeyword> bookKeywords) {

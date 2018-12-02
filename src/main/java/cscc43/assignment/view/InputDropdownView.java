@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 public class InputDropdownView implements View {
     private final String label;
     private final String[] options;
+    private JComboBox<String> comboBox;
     private String defaultOption;
 
     public InputDropdownView(String label, String[] options) {
@@ -32,7 +33,7 @@ public class InputDropdownView implements View {
         labelView.setPreferredSize(new Dimension(150, 16));
         panelView.add(labelView);
 
-        JComboBox<String> comboBox = new JComboBox<String>(this.options);
+        comboBox = new JComboBox<String>(this.options);
         comboBox.setSelectedItem(this.defaultOption);
         panelView.add(comboBox);
 
@@ -42,5 +43,9 @@ public class InputDropdownView implements View {
     public InputDropdownView setDefaultOption(String option) {
         this.defaultOption = option;
         return this;
+    }
+
+    public String getValue() {
+        return (String) comboBox.getSelectedItem();
     }
 }

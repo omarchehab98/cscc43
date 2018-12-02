@@ -11,11 +11,14 @@ import cscc43.assignment.view.View;
 public class PageViewFactory {
     public static View make(int page) {
         switch (page) {
-            case AppState.Pages.UPSERT_BOOK:
+            case AppState.Pages.INSERT_BOOK:
+            case AppState.Pages.UPDATE_BOOK:
                 return new UpsertBookPageView();
-            case AppState.Pages.UPSERT_MOVIE:
+            case AppState.Pages.INSERT_MOVIE:
+            case AppState.Pages.UPDATE_MOVIE:
                 return new UpsertMoviePageView();
-            case AppState.Pages.UPSERT_MUSIC:
+            case AppState.Pages.INSERT_MUSIC:
+            case AppState.Pages.UPDATE_MUSIC:
                 return new UpsertMusicPageView();
             case AppState.Pages.REPORT:
                 return new ReportPageView();

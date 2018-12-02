@@ -174,6 +174,7 @@ public class MenuBarView implements View {
 
     private class UpdateDialogAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            MenuBarController.getInstance().setPage(-1);
             String s = (String)JOptionPane.showInputDialog(App.getFrame(), "Entity name", "Update", JOptionPane.PLAIN_MESSAGE);
             if (s != null) {
                 Object entity = MenuBarController.getInstance().findEntityByName(s);
@@ -197,6 +198,7 @@ public class MenuBarView implements View {
 
     private class RemoveDialogAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            MenuBarController.getInstance().setPage(-1);
             String s = (String)JOptionPane.showInputDialog(App.getFrame(), "Entity name", "Remove", JOptionPane.PLAIN_MESSAGE);
             if (s != null) {
                 if (MenuBarController.getInstance().deleteEntityByName(s)) {
